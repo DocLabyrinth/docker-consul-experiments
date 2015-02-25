@@ -1,0 +1,14 @@
+{
+  "service": {
+    "name": "web",
+    "tags": ["sinatra"],
+    "port": 80
+  },
+  "check": {
+    "id": "api",
+    "name": "HTTP API",
+    "http": "http://localhost:80/health",
+    "interval": "10s",
+    "timeout": "1s"
+  }
+}

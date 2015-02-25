@@ -1,0 +1,38 @@
+ns1:
+  build: docker/consul-server/
+  #image: consul/server
+  command: /usr/bin/consul agent -server -data-dir /tmp/consul -bind 0.0.0.0 -node server-1 -join ns2
+  expose:
+    - "8301"
+  links:
+    - "ns2"
+
+ns2:
+  build: docker/consul-server/
+  #image: consul/server
+  command: /usr/bin/consul agent -server -bootstrap-expect 1 -data-dir /tmp/consul -bind 0.0.0.0 -node server-2
+  expose:
+    - "8301"
+
+nginx:
+  build: docker/load-balancer/
+  #image: consul/server
+  command: /usr/bin/supervisord
+  expose:
+    - "8301"
+  ports:
+    - "3000:80"
+  links:
+    - "ns1"
+    - "ns2"
+    - "web"
+
+web:
+  build: docker/app-server/
+  command: /usr/bin/supervisord
+  expose:
+    - "80"
+  links:
+    - "ns1"
+    - "ns2"
+
